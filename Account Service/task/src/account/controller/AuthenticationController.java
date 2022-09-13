@@ -1,7 +1,7 @@
 package account.controller;
 
 import account.model.DTO.NewUserDTO;
-import account.model.User;
+import account.model.DTO.UserCreatedRequest;
 import account.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
 
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<User> signup(@Valid @RequestBody NewUserDTO newUser) {
+    public ResponseEntity<UserCreatedRequest> signup(@Valid @RequestBody NewUserDTO newUser) {
         return ResponseEntity.ok(authService.signup(newUser));
     }
 }

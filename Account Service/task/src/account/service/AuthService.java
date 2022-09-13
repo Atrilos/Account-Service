@@ -1,8 +1,8 @@
 package account.service;
 
 import account.model.DTO.NewUserDTO;
-import account.model.User;
+import account.model.DTO.UserCreatedRequest;
 
 public interface AuthService {
-    User signup(NewUserDTO newUser);
+    UserCreatedRequest signup(NewUserDTO newUser);
 }
