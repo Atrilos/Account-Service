@@ -1,3 +1,6 @@
+!/Account Service/task/**/src
+!/Account Service/task/**/test
+*.yaml
 /.idea/
 HELP.md
 .gradle
