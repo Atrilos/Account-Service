@@ -28,10 +28,13 @@ public class SecurityConfiguration {
                 .csrf().disable().headers().frameOptions().disable()
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/api/signup").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
                 .antMatchers("/h2/**").permitAll()
                 .antMatchers("/api/empl/**").hasAnyAuthority(
-                        Role.ROLE_ADMIN.name(), Role.ROLE_USER.name()
+                        Role.ROLE_ADMIN.toString(), Role.ROLE_USER.toString()
+                )
+                .antMatchers("/api/auth/changepass").hasAnyAuthority(
+                        Role.ROLE_ADMIN.toString(), Role.ROLE_USER.toString()
                 )
                 .and()
                 .sessionManagement()
@@ -43,7 +46,7 @@ public class SecurityConfiguration {
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(13);
     }
 
     @Bean

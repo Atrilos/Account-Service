@@ -3,6 +3,7 @@
 *.yaml
 *.html
 *.db
+/Topics/
 /.idea/
 HELP.md
 .gradle

@@ -1,6 +1,6 @@
 package account.controller;
 
-import account.model.DTO.UserCreatedRequest;
+import account.model.DTO.UserCreatedResponse;
 import account.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class EmployeeController {
 
     @GetMapping("/payment")
-    public ResponseEntity<UserCreatedRequest> payment(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(new UserCreatedRequest(user));
+    public ResponseEntity<UserCreatedResponse> payment(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(new UserCreatedResponse(user));
     }
 }
