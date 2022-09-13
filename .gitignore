@@ -1,5 +1,6 @@
 !/Account Service/task/**/src
 !/Account Service/task/**/test
+/Account Service/
 *.yaml
 /.idea/
 HELP.md
