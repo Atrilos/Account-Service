@@ -1,6 +1,8 @@
 package account.exception;
 
 import account.exception.model.CustomError;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -12,9 +14,11 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ApplicationExceptionHandler {
@@ -32,9 +36,22 @@ public class ApplicationExceptionHandler {
                 Objects.requireNonNull(ex.getBindingResult().getFieldError()).getDefaultMessage());
     }
 
+    @ExceptionHandler({ConstraintViolationException.class,
+            DataIntegrityViolationException.class})
+    public void handleConstraintExceptions(RuntimeException ex,
+                                                   HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+    }
+
+    @ExceptionHandler(PaymentNotFoundException.class)
+    public void handlePaymentNotFoundException(PaymentNotFoundException ex,
+                                                   HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CustomError> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex,
-                                                                            WebRequest request) {
+                                                                             WebRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         return ResponseEntity
                 .status(status)
@@ -48,13 +65,12 @@ public class ApplicationExceptionHandler {
         error.setErrorMessage(status.getReasonPhrase());
 
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
-        StringBuilder message = new StringBuilder();
-        for (FieldError fieldError : fieldErrors) {
-            message.append(fieldError.getDefaultMessage()).append(", ");
-        }
-        error.setMessage(message.substring(0, message.length() - 2));
+        String message = fieldErrors.stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.joining(", "));
+        error.setMessage(message);
 
-        error.setPath(((ServletWebRequest)request).getRequest().getServletPath());
+        error.setPath(((ServletWebRequest) request).getRequest().getServletPath());
 
         return error;
     }

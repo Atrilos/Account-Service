@@ -30,6 +30,7 @@ public class SecurityConfiguration {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
                 .antMatchers("/h2/**").permitAll()
+                .antMatchers("/api/acct/payments").permitAll()
                 .antMatchers("/api/empl/**").hasAnyAuthority(
                         Role.ROLE_ADMIN.toString(), Role.ROLE_USER.toString()
                 )

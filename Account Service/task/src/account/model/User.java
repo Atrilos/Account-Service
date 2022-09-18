@@ -17,13 +17,13 @@ import java.util.Objects;
 @Setter
 @ToString
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+        indexes = {@Index(columnList = "email", name = "Index_user_email")})
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     private String email;
 
     private String password;
