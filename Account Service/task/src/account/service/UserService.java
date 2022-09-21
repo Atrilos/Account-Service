@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.util.Collection;
 import java.util.Optional;
 
+import static account.configuration.messages.UserMessages.USER_NOT_FOUND_ERRORMSG;
+
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
@@ -27,13 +29,13 @@ public class UserService implements UserDetailsService {
         if (user.isPresent()) {
             return user.get();
         } else {
-            throw new UsernameNotFoundException("User not found!");
+            throw new UsernameNotFoundException(USER_NOT_FOUND_ERRORMSG);
         }
     }
 
     public User loadUserByEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
-        return user.orElseThrow(() -> new UserNotFoundException("User not found!"));
+        return user.orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_ERRORMSG));
     }
 
     public void save(User user) {

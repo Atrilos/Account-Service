@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static account.configuration.messages.AccountMessages.*;
+
 @Service
 @RequiredArgsConstructor
 public class AccountService {
@@ -28,7 +30,7 @@ public class AccountService {
             Account payment = parseAccount(addPaymentDTO);
             accountRepository.save(payment);
         }
-        return Map.of("status", "Added successfully!");
+        return Map.of("status", SUCCESSFUL_ADDITION_MSG);
     }
 
     public Map<String, String> updatePayment(AddPaymentDto paymentDTO) throws ParseException {
@@ -38,10 +40,10 @@ public class AccountService {
                 payment.getEmail(), formatter.parse(paymentDTO.getPeriod())
         );
         payment.setId(foundAccount
-                .orElseThrow(() -> new PaymentNotFoundException("No entry for given period and email found!"))
+                .orElseThrow(() -> new PaymentNotFoundException(PAYMENT_NOT_FOUND_ERRORMSG))
                 .getId());
         accountRepository.save(payment);
-        return Map.of("status", "Updated successfully!");
+        return Map.of("status", SUCCESSFUL_MODIFY_MSG);
     }
 
     public Optional<Account> getAccountByEmailAndPeriod(String email, Date period) {

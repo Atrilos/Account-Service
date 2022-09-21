@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static account.configuration.messages.AdminMessages.*;
+
 @Service
 @RequiredArgsConstructor
 public class AdminService {
@@ -38,11 +40,11 @@ public class AdminService {
 
     private UserDto revokeRole(User user, Group group) {
         if (group.isAdministrative())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't remove ADMINISTRATOR role!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, REMOVE_ADMIN_ERRORMSG);
         if (!user.removeRole(group))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The user does not have a role!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ROLE_DOESNT_EXIST_ERRORMSG);
         if (user.getRoles().size() == 0)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The user must have at least one role!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, NO_ROLE_ERRORMSG);
         userService.save(user);
         return new UserDto(user);
     }
@@ -61,16 +63,16 @@ public class AdminService {
     public Map<String, String> removeUser(User admin, String email) {
         User user = userService.loadUserByEmail(email);
         if (admin.getId().equals(user.getId())) {
-            throw new RemoveUserException("Can't remove ADMINISTRATOR role!");
+            throw new RemoveUserException(REMOVE_ADMIN_ERRORMSG);
         }
         userService.removeUser(user);
         return Map.of("user", email,
-                "status", "Deleted successfully!");
+                "status", SUCCESSFUL_REMOVAL_MSG);
     }
 
     private void checkRolesIntersection(List<String> roles) {
         if (roles.stream().anyMatch(r -> Role.getAdministrativeRoles().contains(r))
             && roles.stream().anyMatch(r -> Role.getBusinessRoles().contains(r)))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The user cannot combine administrative and business roles!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, DIFFERENT_ROLE_TYPES_CONFLICT_ERRORMSG);
     }
 }

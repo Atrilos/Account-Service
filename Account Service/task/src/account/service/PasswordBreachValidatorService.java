@@ -6,6 +6,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Set;
 
+import static account.configuration.messages.AuthMessages.PASSWORD_HACKED_ERRORMSG;
+
 @Service
 public class PasswordBreachValidatorService {
 
@@ -25,7 +27,7 @@ public class PasswordBreachValidatorService {
 
     public void validate(String password) {
         if (breachedPasswords.contains(password)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The password is in the hacker's database!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, PASSWORD_HACKED_ERRORMSG);
         }
     }
 }

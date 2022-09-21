@@ -21,4 +21,8 @@ public enum Role {
                 .map(r -> PREFIX + r.name()).toList();
     }
 
+    @Override
+    public String toString() {
+        return PREFIX + name();
+    }
 }

@@ -34,7 +34,7 @@ public class SecurityConfiguration {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
                 .antMatchers("/h2/**").permitAll()
-                .antMatchers("/api/acct/payments").hasAnyAuthority("ROLE_ACCOUNTANT")
+                .antMatchers("/api/acct/payments").hasAnyAuthority(Role.ACCOUNTANT.toString())
                 .antMatchers("/api/admin/**").hasAnyAuthority(adminAuthorities)
                 .antMatchers("/api/empl/**").hasAnyAuthority(businessAuthorities)
                 .antMatchers("/api/auth/changepass").authenticated()

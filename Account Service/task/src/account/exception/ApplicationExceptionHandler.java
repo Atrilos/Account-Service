@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static account.configuration.messages.AdminMessages.ROLE_NOT_FOUND_ERRORMSG;
+
 @RestControllerAdvice
 public class ApplicationExceptionHandler {
 
@@ -47,7 +49,7 @@ public class ApplicationExceptionHandler {
                                                       HttpServletResponse response) throws IOException {
         if (ex.getCause() instanceof InvalidFormatException invalidFormatException
             && invalidFormatException.getTargetType().equals(Role.class))
-            response.sendError(HttpStatus.NOT_FOUND.value(), "Role not found!");
+            response.sendError(HttpStatus.NOT_FOUND.value(), ROLE_NOT_FOUND_ERRORMSG);
         else
             response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
     }
