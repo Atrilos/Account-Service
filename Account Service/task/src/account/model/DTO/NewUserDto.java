@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
-public class NewUserDTO {
+public class NewUserDto {
     @NotBlank
     private String name;
     @NotBlank

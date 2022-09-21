@@ -1,10 +1,13 @@
 package account.exception;
 
 import account.exception.model.CustomError;
+import account.model.constant.Role;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,9 +26,12 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class ApplicationExceptionHandler {
 
-    @ExceptionHandler(UserExistException.class)
-    public void handleUserExistException(UserExistException ex,
-                                         HttpServletResponse response) throws IOException {
+    @ExceptionHandler({UserExistException.class,
+            RemoveUserException.class,
+            ConstraintViolationException.class,
+            DataIntegrityViolationException.class})
+    public void handleBadRequestExceptions(RuntimeException ex,
+                                           HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
     }
 
@@ -36,16 +42,20 @@ public class ApplicationExceptionHandler {
                 Objects.requireNonNull(ex.getBindingResult().getFieldError()).getDefaultMessage());
     }
 
-    @ExceptionHandler({ConstraintViolationException.class,
-            DataIntegrityViolationException.class})
-    public void handleConstraintExceptions(RuntimeException ex,
-                                                   HttpServletResponse response) throws IOException {
-        response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public void handleHttpMessageNotReadableException(HttpMessageNotReadableException ex,
+                                                      HttpServletResponse response) throws IOException {
+        if (ex.getCause() instanceof InvalidFormatException invalidFormatException
+            && invalidFormatException.getTargetType().equals(Role.class))
+            response.sendError(HttpStatus.NOT_FOUND.value(), "Role not found!");
+        else
+            response.sendError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
     }
 
-    @ExceptionHandler(PaymentNotFoundException.class)
-    public void handlePaymentNotFoundException(PaymentNotFoundException ex,
-                                                   HttpServletResponse response) throws IOException {
+    @ExceptionHandler({PaymentNotFoundException.class,
+            UserNotFoundException.class})
+    public void handlePaymentNotFoundException(RuntimeException ex,
+                                               HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.NOT_FOUND.value(), ex.getMessage());
     }
 

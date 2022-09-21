@@ -1,6 +1,6 @@
 package account.controller;
 
-import account.model.DTO.AddPaymentDTO;
+import account.model.DTO.AddPaymentDto;
 import account.service.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +22,12 @@ public class AccountController {
 
     @PostMapping("/payments")
     @Transactional(rollbackFor = ParseException.class)
-    public ResponseEntity<?> addPayments(@RequestBody List<@Valid AddPaymentDTO> payments) throws ParseException {
+    public ResponseEntity<?> addPayments(@RequestBody List<@Valid AddPaymentDto> payments) throws ParseException {
         return ResponseEntity.ok(accountService.addPayments(payments));
     }
 
     @PutMapping("/payments")
-    public ResponseEntity<?> updatePayments(@RequestBody @Valid AddPaymentDTO payment) throws ParseException {
+    public ResponseEntity<?> updatePayments(@RequestBody @Valid AddPaymentDto payment) throws ParseException {
         return ResponseEntity.ok(accountService.updatePayment(payment));
     }
 }

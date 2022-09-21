@@ -1,5 +1,6 @@
 package account.configuration;
 
+import account.exception.CustomAccessDeniedHandler;
 import account.model.constant.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -19,9 +20,12 @@ public class SecurityConfiguration {
 
     private final AuthenticationEntryPoint restAuthenticationEntryPoint;
     private final UserDetailsService userDetailsService;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        String[] adminAuthorities = Role.getAdministrativeRoles().toArray(String[]::new);
+        String[] businessAuthorities = Role.getBusinessRoles().toArray(String[]::new);
         http.httpBasic()
                 .authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and()
@@ -30,18 +34,16 @@ public class SecurityConfiguration {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
                 .antMatchers("/h2/**").permitAll()
-                .antMatchers("/api/acct/payments").permitAll()
-                .antMatchers("/api/empl/**").hasAnyAuthority(
-                        Role.ROLE_ADMIN.toString(), Role.ROLE_USER.toString()
-                )
-                .antMatchers("/api/auth/changepass").hasAnyAuthority(
-                        Role.ROLE_ADMIN.toString(), Role.ROLE_USER.toString()
-                )
+                .antMatchers("/api/acct/payments").hasAnyAuthority("ROLE_ACCOUNTANT")
+                .antMatchers("/api/admin/**").hasAnyAuthority(adminAuthorities)
+                .antMatchers("/api/empl/**").hasAnyAuthority(businessAuthorities)
+                .antMatchers("/api/auth/changepass").authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authenticationProvider(authenticationProvider());
+                .authenticationProvider(authenticationProvider())
+                .exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
         return http.build();
     }
 

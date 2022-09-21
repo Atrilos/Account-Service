@@ -16,7 +16,7 @@ import java.util.Objects;
 @ToString
 @Entity
 @Table(indexes = {@Index(columnList = "employee", name = "Index_acc_employee")},
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"employee", "period"})})
+        uniqueConstraints = {@UniqueConstraint(name = "UC_employee_period", columnNames = {"employee", "period"})})
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

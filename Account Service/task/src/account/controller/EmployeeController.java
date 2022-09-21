@@ -1,6 +1,6 @@
 package account.controller;
 
-import account.model.DTO.GetPaymentDTO;
+import account.model.DTO.GetPaymentDto;
 import account.model.User;
 import account.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +27,12 @@ public class EmployeeController {
     @GetMapping(value = "/payment", params = "period")
     public ResponseEntity<?> paymentByPeriod(@AuthenticationPrincipal User user,
                                                  @RequestParam @Pattern(regexp = "((0\\d)|(1[012]))-2\\d{3}") String period) throws ParseException {
-        GetPaymentDTO result = employeeService.getPaymentByPeriod(user, period);
+        GetPaymentDto result = employeeService.getPaymentByPeriod(user, period);
         return ResponseEntity.ok(result == null ? "{}" : result);
     }
 
     @GetMapping("/payment")
-    public ResponseEntity<List<GetPaymentDTO>> payments(@AuthenticationPrincipal User user) {
+    public ResponseEntity<List<GetPaymentDto>> payments(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(employeeService.getPayments(user));
     }
 }

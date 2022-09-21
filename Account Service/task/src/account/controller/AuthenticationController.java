@@ -1,9 +1,6 @@
 package account.controller;
 
-import account.model.DTO.NewPasswordDTO;
-import account.model.DTO.NewUserDTO;
-import account.model.DTO.PasswordChangedResponse;
-import account.model.DTO.UserCreatedResponse;
+import account.model.DTO.*;
 import account.model.User;
 import account.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +21,13 @@ public class AuthenticationController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserCreatedResponse> signup(@Valid @RequestBody NewUserDTO newUser) {
+    public ResponseEntity<UserDto> signup(@Valid @RequestBody NewUserDto newUser) {
         return ResponseEntity.ok(authService.signup(newUser));
     }
 
     @PostMapping("/changepass")
     public ResponseEntity<PasswordChangedResponse> changepass(@AuthenticationPrincipal User currentUser,
-                                                              @Valid @RequestBody NewPasswordDTO newPassword) {
+                                                              @Valid @RequestBody NewPasswordDto newPassword) {
         return ResponseEntity.ok(authService.changePass(currentUser, newPassword));
     }
 }

@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class GetPaymentDTO {
+public class GetPaymentDto {
     private String name;
     private String lastname;
     private String period;

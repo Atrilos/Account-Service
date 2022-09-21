@@ -8,7 +8,7 @@ import javax.validation.constraints.*;
 
 @Data
 @NoArgsConstructor
-public class AddPaymentDTO {
+public class AddPaymentDto {
     @JsonProperty("employee")
     @Email(regexp = ".*@acme\\.com")
     @NotBlank

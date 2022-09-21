@@ -2,7 +2,7 @@ package account.service;
 
 import account.exception.PaymentNotFoundException;
 import account.model.Account;
-import account.model.DTO.AddPaymentDTO;
+import account.model.DTO.AddPaymentDto;
 import account.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,8 +22,8 @@ public class AccountService {
     private final UserService userService;
     private final SimpleDateFormat formatter;
 
-    public Map<String, String> addPayments(List<AddPaymentDTO> paymentDTOList) throws ParseException {
-        for (AddPaymentDTO addPaymentDTO : paymentDTOList) {
+    public Map<String, String> addPayments(List<AddPaymentDto> paymentDTOList) throws ParseException {
+        for (AddPaymentDto addPaymentDTO : paymentDTOList) {
             userService.loadUserByUsername(addPaymentDTO.getEmail());
             Account payment = parseAccount(addPaymentDTO);
             accountRepository.save(payment);
@@ -31,7 +31,7 @@ public class AccountService {
         return Map.of("status", "Added successfully!");
     }
 
-    public Map<String, String> updatePayment(AddPaymentDTO paymentDTO) throws ParseException {
+    public Map<String, String> updatePayment(AddPaymentDto paymentDTO) throws ParseException {
         userService.loadUserByUsername(paymentDTO.getEmail());
         Account payment = parseAccount(paymentDTO);
         Optional<Account> foundAccount = getAccountByEmailAndPeriod(
@@ -52,7 +52,7 @@ public class AccountService {
         return accountRepository.getAccountsByEmail(email);
     }
 
-    private Account parseAccount(AddPaymentDTO addPaymentDTO) throws ParseException {
+    private Account parseAccount(AddPaymentDto addPaymentDTO) throws ParseException {
         Account payment = new Account();
         payment.setEmail(addPaymentDTO.getEmail());
         payment.setPeriod(formatter.parse(addPaymentDTO.getPeriod()));

@@ -1,7 +1,7 @@
 package account.service;
 
 import account.model.Account;
-import account.model.DTO.GetPaymentDTO;
+import account.model.DTO.GetPaymentDto;
 import account.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,7 +22,7 @@ public class EmployeeService {
     @Qualifier("fullDateFormat")
     private final SimpleDateFormat fullMonthNameFormatter;
 
-    public GetPaymentDTO getPaymentByPeriod(User user, String period) throws ParseException {
+    public GetPaymentDto getPaymentByPeriod(User user, String period) throws ParseException {
         Optional<Account> foundAccount = accountService.getAccountByEmailAndPeriod(
                 user.getUsername(), formatter.parse(period));
         if (foundAccount.isEmpty())
@@ -32,18 +32,18 @@ public class EmployeeService {
         return createGetPaymentDTO(user, account);
     }
 
-    public List<GetPaymentDTO> getPayments(User user) {
+    public List<GetPaymentDto> getPayments(User user) {
         List<Account> foundAccountList = accountService.getAccountsByEmail(user.getUsername());
-        List<GetPaymentDTO> result = new ArrayList<>();
+        List<GetPaymentDto> result = new ArrayList<>();
         for (Account account : foundAccountList) {
-            GetPaymentDTO entry = createGetPaymentDTO(user, account);
+            GetPaymentDto entry = createGetPaymentDTO(user, account);
             result.add(entry);
         }
         return result;
     }
 
-    private GetPaymentDTO createGetPaymentDTO(User user, Account account) {
-        GetPaymentDTO result = new GetPaymentDTO();
+    private GetPaymentDto createGetPaymentDTO(User user, Account account) {
+        GetPaymentDto result = new GetPaymentDto();
         result.setName(user.getName());
         result.setLastname(user.getLastname());
         result.setPeriod(fullMonthNameFormatter.format(account.getPeriod()));
