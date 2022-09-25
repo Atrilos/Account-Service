@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -26,8 +27,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/changepass")
-    public ResponseEntity<PasswordChangedResponse> changepass(@AuthenticationPrincipal User currentUser,
-                                                              @Valid @RequestBody NewPasswordDto newPassword) {
+    public ResponseEntity<Map<String, String>> changepass(@AuthenticationPrincipal User currentUser,
+                                                          @Valid @RequestBody NewPasswordDto newPassword) {
         return ResponseEntity.ok(authService.changePass(currentUser, newPassword));
     }
 }

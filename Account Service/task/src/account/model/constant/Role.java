@@ -7,7 +7,8 @@ import java.util.List;
 public enum Role {
     ADMINISTRATOR,
     USER,
-    ACCOUNTANT;
+    ACCOUNTANT,
+    AUDITOR;
 
     private final static String PREFIX = "ROLE_";
 
@@ -18,7 +19,7 @@ public enum Role {
     public static Collection<String> getBusinessRoles() {
         return Arrays.stream(Role.values())
                 .filter(r -> !r.equals(Role.ADMINISTRATOR))
-                .map(r -> PREFIX + r.name()).toList();
+                .map(Role::toString).toList();
     }
 
     @Override

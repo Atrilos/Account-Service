@@ -1,10 +1,12 @@
 package account.service;
 
 import account.exception.RemoveUserException;
+import account.model.DTO.ChangeAccessDto;
 import account.model.DTO.ChangeRoleDto;
 import account.model.DTO.UserDto;
 import account.model.Group;
 import account.model.User;
+import account.model.constant.Action;
 import account.model.constant.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,18 +25,19 @@ public class AdminService {
 
     private final UserService userService;
     private final GroupService groupService;
+    private final AuditService auditService;
 
     public UserDto changeRole(ChangeRoleDto changeRoleDTO) {
         User user = userService.loadUserByEmail(changeRoleDTO.getUser());
-        Group group = groupService.getByName("ROLE_" + changeRoleDTO.getRole().name());
-        switch (changeRoleDTO.getOperation()) {
+        Group group = groupService.getByName(changeRoleDTO.getRole().toString());
+        switch (changeRoleDTO.getRoleOperation()) {
             case GRANT -> {
                 return grantRole(user, group);
             }
             case REMOVE -> {
                 return revokeRole(user, group);
             }
-            default -> throw new IllegalStateException("Unexpected value: " + changeRoleDTO.getOperation());
+            default -> throw new IllegalStateException("Unexpected value: " + changeRoleDTO.getRoleOperation());
         }
     }
 
@@ -46,6 +49,8 @@ public class AdminService {
         if (user.getRoles().size() == 0)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, NO_ROLE_ERRORMSG);
         userService.save(user);
+        auditService.addEvent(Action.REMOVE_ROLE,
+                "Remove role %s from %s".formatted(group.getName().substring(5), user.getUsername()));
         return new UserDto(user);
     }
 
@@ -53,6 +58,8 @@ public class AdminService {
         user.addRole(group);
         checkRolesIntersection(user.getRoles().stream().map(Group::getName).toList());
         userService.save(user);
+        auditService.addEvent(Action.GRANT_ROLE,
+                "Grant role %s to %s".formatted(group.getName().substring(5), user.getUsername()));
         return new UserDto(user);
     }
 
@@ -66,8 +73,18 @@ public class AdminService {
             throw new RemoveUserException(REMOVE_ADMIN_ERRORMSG);
         }
         userService.removeUser(user);
+        auditService.addEvent(Action.DELETE_USER, user.getUsername());
         return Map.of("user", email,
                 "status", SUCCESSFUL_REMOVAL_MSG);
+    }
+
+    public Map<String, String> changeAccess(ChangeAccessDto changeAccessDto) {
+        User user = userService.loadUserByEmail(changeAccessDto.getUser());
+        switch (changeAccessDto.getOperation()) {
+            case LOCK -> userService.lockUser(user);
+            case UNLOCK -> userService.unlockUser(user);
+        }
+        return Map.of("status", "User %s %s!".formatted(user.getUsername(), changeAccessDto.getOperation().name()));
     }
 
     private void checkRolesIntersection(List<String> roles) {

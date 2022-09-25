@@ -1,6 +1,6 @@
 package account.model.constant;
 
-public enum Operation {
+public enum RoleOperation {
     GRANT,
     REMOVE
 }

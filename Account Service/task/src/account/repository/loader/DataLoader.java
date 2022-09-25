@@ -20,7 +20,7 @@ public class DataLoader {
     private void createRoles() {
         Collection<String> allPresentedRoles = groupRepository.findAll().stream().map(Group::getName).toList();
         long numberOfChanges = Arrays.stream(Role.values())
-                .filter(r -> !allPresentedRoles.contains("ROLE_" + r.name()))
+                .filter(r -> !allPresentedRoles.contains(r.toString()))
                 .map(r -> groupRepository.save(new Group(r)))
                 .count();
     }

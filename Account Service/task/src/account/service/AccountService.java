@@ -5,6 +5,7 @@ import account.model.Account;
 import account.model.DTO.AddPaymentDto;
 import account.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.concurrent.ForkJoinPoolFactoryBean;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -13,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ForkJoinPool;
 
 import static account.configuration.messages.AccountMessages.*;
 

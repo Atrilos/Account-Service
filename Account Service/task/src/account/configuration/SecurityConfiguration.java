@@ -25,18 +25,23 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         String[] adminAuthorities = Role.getAdministrativeRoles().toArray(String[]::new);
-        String[] businessAuthorities = Role.getBusinessRoles().toArray(String[]::new);
+        String[] businessAuthoritiesWithoutAuditor =
+                Role.getBusinessRoles()
+                        .stream()
+                        .filter(r -> !r.equals(Role.AUDITOR.toString()))
+                        .toArray(String[]::new);
         http.httpBasic()
                 .authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and()
                 .csrf().disable().headers().frameOptions().disable()
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
+                .antMatchers("/api/auth/signup").permitAll()
                 .antMatchers("/h2/**").permitAll()
-                .antMatchers("/api/acct/payments").hasAnyAuthority(Role.ACCOUNTANT.toString())
+                .antMatchers("/api/acct/**").hasAnyAuthority(Role.ACCOUNTANT.toString())
                 .antMatchers("/api/admin/**").hasAnyAuthority(adminAuthorities)
-                .antMatchers("/api/empl/**").hasAnyAuthority(businessAuthorities)
+                .antMatchers("/api/empl/**").hasAnyAuthority(businessAuthoritiesWithoutAuditor)
+                .antMatchers("/api/security/**").hasAnyAuthority(Role.AUDITOR.toString())
                 .antMatchers("/api/auth/changepass").authenticated()
                 .and()
                 .sessionManagement()

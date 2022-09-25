@@ -1,9 +1,7 @@
 package account.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Setter;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,18 +12,20 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Setter
+@Getter
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @ToString
 @Entity
 @Table(name = "users",
-        indexes = {@Index(columnList = "email", name = "Index_user_email")})
+        indexes = {@Index(columnList = "username", name = "Idx_username")})
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String email;
+    @JsonProperty("email")
+    private String username;
 
     private String password;
 
@@ -46,6 +46,7 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id"))
     private Set<Group> roles;
+    private Integer failedLoginAttempts;
 
     public User() {
         accountNonExpired = true;
@@ -70,30 +71,14 @@ public class User implements UserDetails {
         return roles.remove(role);
     }
 
-    public Long getId() {
-        return id;
-    }
-
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override
     public String getPassword() {
         return password;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public Set<Group> getRoles() {
-        return roles;
     }
 
     @Override
@@ -127,5 +112,9 @@ public class User implements UserDetails {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    public int addFailedLoginAttempt() {
+        return ++failedLoginAttempts;
     }
 }

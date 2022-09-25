@@ -1,5 +1,6 @@
 package account.controller;
 
+import account.model.DTO.ChangeAccessDto;
 import account.model.DTO.ChangeRoleDto;
 import account.model.DTO.UserDto;
 import account.model.User;
@@ -38,5 +39,10 @@ public class AdminController {
                                                           @Email
                                                           @NotBlank String email) {
         return ResponseEntity.ok(adminService.removeUser(admin, email));
+    }
+
+    @PutMapping("/user/access")
+    public ResponseEntity<Map<String, String>> access(@Valid ChangeAccessDto changeAccessDto) {
+        return ResponseEntity.ok(adminService.changeAccess(changeAccessDto));
     }
 }
