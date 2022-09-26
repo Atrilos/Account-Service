@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.Collection;
 import java.util.Map;
 
 @RestController
@@ -29,7 +30,7 @@ public class AdminController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<?> getAllUsers() {
+    public ResponseEntity<Collection<UserDto>> getAllUsers() {
         return ResponseEntity.ok(adminService.getAllUsers());
     }
 

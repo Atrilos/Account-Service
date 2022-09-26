@@ -33,7 +33,6 @@ public class SecurityConfiguration {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/auth/signup").permitAll()
-                .antMatchers("/h2/**").permitAll()
                 .antMatchers("/api/acct/**").hasAnyAuthority(Role.ACCOUNTANT.toString())
                 .antMatchers("/api/admin/**").hasAnyAuthority(adminAuthorities)
                 .antMatchers("/api/empl/**").hasAnyAuthority(businessAuthoritiesWithoutAuditor)
