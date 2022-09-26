@@ -23,7 +23,8 @@ public class AuthenticationEvents {
     @EventListener
     public void onSuccess(AuthenticationSuccessEvent event) {
         User user = (User) event.getAuthentication().getPrincipal();
-        userService.resetFailedLoginAttempts(user);
+        if (user.getFailedLoginAttempts() > 0)
+            userService.resetFailedLoginAttempts(user);
     }
 
     @EventListener
