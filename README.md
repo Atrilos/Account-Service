@@ -1,7 +1,7 @@
 # Account-Service
 Hyperskill edu project. Creating spring-based app with auth.
 
-#How to start
+# How to start
 1.Clone repository
 2.Run .\gradlew.bat Account_Service-task:clean bootRun
 Exposed port 28852
