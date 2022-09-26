@@ -2,6 +2,8 @@
 !/Account Service/task/**/test
 *.yaml
 *.html
+*.db
+/Topics/
 /.idea/
 HELP.md
 .gradle
