@@ -7,4 +7,6 @@ public class AdminMessages {
     public final static String NO_ROLE_ERRORMSG = "The user must have at least one role!";
     public final static String SUCCESSFUL_REMOVAL_MSG = "Deleted successfully!";
     public final static String DIFFERENT_ROLE_TYPES_CONFLICT_ERRORMSG = "The user cannot combine administrative and business roles!";
+    public final static String REMOVE_ROLE_RESPONSE_MSG = "Remove role %s from %s";
+    public final static String GRANT_ROLE_RESPONSE_MSG = "Grant role %s to %s";
 }

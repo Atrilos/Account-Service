@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @JsonProperty("email")
     private String username;
@@ -46,7 +46,7 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id"))
     private Set<Group> roles;
-    private Integer failedLoginAttempts;
+    private int failedLoginAttempts;
 
     public User() {
         accountNonExpired = true;

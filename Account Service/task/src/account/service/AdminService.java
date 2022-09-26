@@ -30,14 +30,14 @@ public class AdminService {
     public UserDto changeRole(ChangeRoleDto changeRoleDTO) {
         User user = userService.loadUserByEmail(changeRoleDTO.getUser());
         Group group = groupService.getByName(changeRoleDTO.getRole().toString());
-        switch (changeRoleDTO.getRoleOperation()) {
+        switch (changeRoleDTO.getOperation()) {
             case GRANT -> {
                 return grantRole(user, group);
             }
             case REMOVE -> {
                 return revokeRole(user, group);
             }
-            default -> throw new IllegalStateException("Unexpected value: " + changeRoleDTO.getRoleOperation());
+            default -> throw new IllegalStateException("Unexpected value: " + changeRoleDTO.getOperation());
         }
     }
 
@@ -50,7 +50,7 @@ public class AdminService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, NO_ROLE_ERRORMSG);
         userService.save(user);
         auditService.addEvent(Action.REMOVE_ROLE,
-                "Remove role %s from %s".formatted(group.getName().substring(5), user.getUsername()));
+                REMOVE_ROLE_RESPONSE_MSG.formatted(group.getName().substring(5), user.getUsername()));
         return new UserDto(user);
     }
 
@@ -59,7 +59,7 @@ public class AdminService {
         checkRolesIntersection(user.getRoles().stream().map(Group::getName).toList());
         userService.save(user);
         auditService.addEvent(Action.GRANT_ROLE,
-                "Grant role %s to %s".formatted(group.getName().substring(5), user.getUsername()));
+                GRANT_ROLE_RESPONSE_MSG.formatted(group.getName().substring(5), user.getUsername()));
         return new UserDto(user);
     }
 
@@ -84,7 +84,8 @@ public class AdminService {
             case LOCK -> userService.lockUser(user);
             case UNLOCK -> userService.unlockUser(user);
         }
-        return Map.of("status", "User %s %s!".formatted(user.getUsername(), changeAccessDto.getOperation().name()));
+        return Map.of("status", "User %s %s!".formatted(user.getUsername(),
+                changeAccessDto.getOperation().getLoggingDefinition()));
     }
 
     private void checkRolesIntersection(List<String> roles) {

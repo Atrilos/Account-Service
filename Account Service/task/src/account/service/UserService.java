@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.Optional;
 
-import static account.configuration.messages.UserMessages.USER_NOT_FOUND_ERRORMSG;
+import static account.configuration.messages.UserMessages.*;
 
 @Service
 @RequiredArgsConstructor
@@ -67,11 +67,12 @@ public class UserService implements UserDetailsService {
         }
         User user = foundUser.get();
         if (user.addFailedLoginAttempt() >= MAX_FAILED_ATTEMPTS) {
-            auditService.addEvent(Action.BRUTE_FORCE, request.getRequestURI());
+            auditService.addEvent(Action.BRUTE_FORCE, user.getUsername(), request.getRequestURI());
             if (!isAdministrative(user)) {
                 lockUser(user);
             }
         }
+        userRepository.save(user);
     }
 
     private static boolean isAdministrative(User user) {
@@ -81,25 +82,25 @@ public class UserService implements UserDetailsService {
     public void lockUser(User user) {
         if (isAdministrative(user)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Can't lock the ADMINISTRATOR!");
+                    ADMIN_LOCK_ERRORMSG);
         } else if (!user.isAccountNonLocked()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "User is already locked!");
+                    USER_ALREADY_LOCK_ERRORMSG);
         }
         user.setAccountNonLocked(false);
         userRepository.save(user);
-        auditService.addEvent(Action.LOCK_USER, "Lock user " + user.getUsername());
+        auditService.addEvent(Action.LOCK_USER, user.getUsername(), LOCK_USER_RESPONSE_MSG.formatted(user.getUsername()));
     }
 
     public void unlockUser(User user) {
         if (user.isAccountNonLocked()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "User is already unlocked!");
+                    USER_ALREADY_UNLOCK_ERRORMSG);
         }
         user.setAccountNonLocked(true);
         user.setFailedLoginAttempts(0);
         userRepository.save(user);
         auditService.addEvent(Action.UNLOCK_USER,
-                "Unlock user %s".formatted(user.getUsername()));
+                UNLOCK_USER_RESPONSE_MSG.formatted(user.getUsername()));
     }
 }

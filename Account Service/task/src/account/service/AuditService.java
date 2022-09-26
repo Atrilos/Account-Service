@@ -15,21 +15,30 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class AuditService {
     private final AuditRepository auditRepository;
-    private final HttpServletRequest httpServletRequest;
+    private final HttpServletRequest request;
 
     public void addEvent(Action action, String object) {
         String subject = getCurrentUser();
-        SecurityEvent securityEvent = SecurityEvent.builder()
-                .action(action)
-                .subject(subject)
-                .object(object)
-                .path(httpServletRequest.getRequestURI())
-                .build();
+        SecurityEvent securityEvent = getSecurityEvent(action, subject, object);
         auditRepository.save(securityEvent);
     }
 
+    public void addEvent(Action action, String subject, String object) {
+        SecurityEvent securityEvent = getSecurityEvent(action, subject, object);
+        auditRepository.save(securityEvent);
+    }
+
+    private SecurityEvent getSecurityEvent(Action action, String subject, String object) {
+        return SecurityEvent.builder()
+                .action(action)
+                .subject(subject)
+                .object(object)
+                .path(request.getRequestURI())
+                .build();
+    }
+
     private String getCurrentUser() {
-        Principal principal = httpServletRequest.getUserPrincipal();
+        Principal principal = request.getUserPrincipal();
         return principal == null ? "Anonymous" : principal.getName();
     }
 

@@ -42,7 +42,7 @@ public class AdminController {
     }
 
     @PutMapping("/user/access")
-    public ResponseEntity<Map<String, String>> access(@Valid ChangeAccessDto changeAccessDto) {
+    public ResponseEntity<Map<String, String>> access(@RequestBody @Valid ChangeAccessDto changeAccessDto) {
         return ResponseEntity.ok(adminService.changeAccess(changeAccessDto));
     }
 }

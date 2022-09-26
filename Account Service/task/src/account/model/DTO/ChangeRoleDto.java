@@ -22,5 +22,5 @@ public class ChangeRoleDto {
     private Role role;
     @NotNull
     @Enumerated(EnumType.STRING)
-    private RoleOperation roleOperation;
+    private RoleOperation operation;
 }

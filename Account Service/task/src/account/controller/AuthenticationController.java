@@ -1,6 +1,8 @@
 package account.controller;
 
-import account.model.DTO.*;
+import account.model.DTO.NewPasswordDto;
+import account.model.DTO.NewUserDto;
+import account.model.DTO.UserDto;
 import account.model.User;
 import account.service.AuthService;
 import lombok.RequiredArgsConstructor;

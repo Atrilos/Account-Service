@@ -4,7 +4,7 @@ import account.model.constant.Action;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Builder
 @AllArgsConstructor
@@ -16,11 +16,11 @@ import java.time.LocalDate;
 @Table(name = "security_event")
 public class SecurityEvent {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
     @Builder.Default
-    private LocalDate date = LocalDate.now();
+    private LocalDateTime date = LocalDateTime.now();
     @Enumerated(EnumType.STRING)
     private Action action;
     private String subject;

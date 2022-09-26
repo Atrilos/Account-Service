@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
+    @Transactional
     @Modifying
     @Query("UPDATE User u SET u.failedLoginAttempts = 0 WHERE u.id = ?1")
     void resetFailedLoginAttempts(Long id);

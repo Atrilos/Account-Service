@@ -19,7 +19,7 @@ import java.util.Objects;
         uniqueConstraints = {@UniqueConstraint(name = "UC_employee_period", columnNames = {"employee", "period"})})
 public class Account {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @JsonProperty("employee")
     @Column(name = "employee")
